@@ -26,7 +26,7 @@ barcodeURLp2 := "&h=50&s=1&f=0&bf="
 ; #########################################################################
 ; ##########   DEFINE THE PARAMETERS FOR THE PROGRESS BAR WINDOW ##########
 ; #########################################################################
-; "b1" in the options below means borderless. 
+; "b1" in the options below means borderless.
 ; "b2" would have a regular border
 ; "M" means moveable (M1 is resizeable and M2 has min/max/close buttons), but it has to have a title StatusBar
 ; "fs" denotes "subtext" font size (put "0" to use sysdefault)
@@ -40,17 +40,15 @@ Return
 ; ########## MACROS BY HOTKEY ##########
 ; ######################################
 
-
-
 ^+c:: ; Ctrl + Shift + c
 	Gosub, CopySelected
 Return
 
 F5:: ; OPENS THE INPUT BOX TO STORE SOMETHING TO COLD STORAGE
 InputBox, extraClipboard, , Please enter contents for extra clipboard`n(ESC to exit)
-; MsgBox,4,,Clear clipboard? 
+; MsgBox,4,,Clear clipboard?
 	; IfMsgBox, Yes
-		clipboard := "✔✔✔ New Cold Storage Cycle ✔✔✔" ; 
+		clipboard := "✔✔✔ New Cold Storage Cycle ✔✔✔" ;
 		xtrClip := extraClipboard
 		; EnvAdd, xtrClip, 24
 		; clipboard = %extraClipboard%
@@ -74,7 +72,7 @@ Return
 ; #########################################################################################
 ; ties the HUD progress bar to the toggle function.
 ; #########################################################################################
-Ins:: 
+Ins::
 	; Gosub, ToggleProgressBar ; You need to write this function first!
 
 */
@@ -102,14 +100,14 @@ Return ;
 	; SendInput, %extraClipboard%
 	Send, {Enter}
 	BlockInput, MouseMoveOff
-	
+
 	gosub, stuckKeyCheck
 
 Return
 
 ; #########################################################################################
 ; Generates an alpha-numeric barcode from the contents of the extra clipboard
-; Currently uses Cin7's barcode image generator
+; Currently uses Cin7's barcode image generator. Need to replace
 ; #########################################################################################
 ^+x:: ; (Ctrl + Shift + x)
 	gosub, stuckKeyCheck
@@ -144,9 +142,8 @@ Return
 
 	Send, %xtrClip%
 
-
 	Tooltip ; Turn off the tip
-	
+
 	Sleep, 300
 	Send, +{Tab 2}
 	Sleep, 100
@@ -162,9 +159,9 @@ Return
 
 F2::
 
-	myVarCurrentDateTime := A_Now 
+	myVarCurrentDateTime := A_Now
 	EnvAdd, myVarCurrentDateTime, -6, hours ; for those after-midnight entries... Note, "EnvSub" doesn't work in this context.
-	oneWkLater := myVarCurrentDateTime ; 
+	oneWkLater := myVarCurrentDateTime ;
 	EnvAdd, oneWkLater, 7, days
 
 	myDispatchDt := ;
@@ -175,29 +172,36 @@ F2::
 	FormatTime, myArrivalDt, %oneWkLater%, M/d/yyyy
 
 	; Send, {LButton}
-	Sleep, 30
+	; Sleep, 30
 	Send, ^a
 	Sleep, 50
-	Send, {Backspace}
+	; Send, {Backspace}
 
 	Send, %myDispatchDt%
 	Sleep, 100
-	Send, {Backspace}
-	Sleep, 50
+	; Send, {Backspace}
+	; Sleep, 50
 	TabSleep(2)
 	Send, %myArrivalDt%
 	TabSleep(8)
 	Send, ^a ;
 	Sleep, 50
 	Send, {BackSpace}
-	Send, %clipboard% ; Is only useful if you've saved the tracking info to the clipboard...
+
+	; \R is the AHK RegEx code for any new line char.
+	cleanedClip := RegExReplace(clipboard, "\R{1,}", "`r")
+
+	; below line also works, but is less versatile.
+	; cleanedClip := StrReplace(StrReplace(Clipboard,"`r`n","`n"),"`n`r","`n")
+
+	Send, %cleanedClip% ; Is only useful if you've saved the tracking info to the clipboard...
 
 	gosub, stuckKeyCheck
 
 Return
 
 ::rdt::
-	myVarCurrentDateTime := A_Now 
+	myVarCurrentDateTime := A_Now
 	EnvAdd, myVarCurrentDateTime, -6, hours
 	EnvAdd, myVarCurrentDateTime, 1, Days ; sets date to tomorrow for submitting ARNs
 	myDispatchDt :=
@@ -234,7 +238,7 @@ else
 Return
 */
 
-stuckKeyCheck: 
+stuckKeyCheck:
 	If GetKeyState("Ctrl")           ; If the OS believes the key to be in (logical state),
 	{
 	    If !GetKeyState("Ctrl","P")  ; but  the user isn't physically holding it down (physical state)
@@ -302,7 +306,7 @@ CopySelected: ; copy selected to cold storage
 	    return
 	}
 	extraClipboard := clipboard
-	clipboard := "✔✔✔ New Cold Storage Cycle ✔✔✔" ; 
+	clipboard := "✔✔✔ New Cold Storage Cycle ✔✔✔" ;
 	ClipWait, 3, 1
 	if ErrorLevel
 	{
@@ -325,7 +329,7 @@ return
 TabSleep(myCtr)
 {
 	Loop %myCtr%
-	{	
+	{
 		Send, {Tab}
 		Sleep, 10
 	}
