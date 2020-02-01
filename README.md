@@ -8,8 +8,13 @@ Simply AHK script that is mostly useful to me.
 [Using syntax highlighting in markdown syntax](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml)  
 
 
+- If you need to create a local copy of a project from Github, all you need to do is open bash in the desired target folder, then type:
 
-- Make sure your local version matches the master branch before making a new branch. If you're not already on the main branch, it'll switch to the main when you do this.
+  ```gitattributes
+  git clone the_url_of_the_repository
+  ```
+
+- If you already have a project downloaded and want to make a new branch, first make sure your local version matches the master branch. If you're not already on the main branch, it'll switch to the main when you do this.
 
   ```gitattributes
   git checkout master
