@@ -13,7 +13,7 @@ SetTitleMatchMode 2
 #WinActivateForce
 SetControlDelay 1 ; has no effect on SendMode Input
 SetWinDelay 1
-SetKeyDelay 10 ; has no effect on SendMode Input
+SetKeyDelay 15 ; has no effect on SendMode Input
 SetMouseDelay 1
 SetBatchLines 1 ; has no effect on SendMode Input
 BlockInput, Send ; keeps user error from modifying input during a send event (doesn't really get a chance to act when SendMode is "Input")
@@ -21,7 +21,9 @@ BlockInput, Send ; keeps user error from modifying input during a send event (do
 ; variables
 barcodeURLp1 := "https://go.cin7.com/cloud/docs/barcode.ashx?code="
 barcodeURLp2 := "&h=50&s=1&f=0&bf="
-
+; typingSpeed := 
+prodLblFormatterFront := "<br><center><strong>"
+prodLblFormatterBack := "</strong></center>"
 
 ; #########################################################################
 ; ##########   DEFINE THE PARAMETERS FOR THE PROGRESS BAR WINDOW ##########
@@ -97,8 +99,13 @@ Return ;
 	BlockInput, MouseMove
 	extraClipboard := RegExReplace(extraClipboard, "\r\n?|\n\r?", "`n")
 	SendRaw, %extraClipboard% ; You MUST use "SendRaw" in this instance instead of "Send" because otherwise special characters (like #) can't be sent
-	; SendInput, %extraClipboard%
-	Send, {Enter}
+;	SendInput, %extraClipboard%
+;	Send, {Enter}
+;	SendRaw, {Enter}
+;	SendInput, {Tab}
+;	Send, {Enter}
+	
+
 	BlockInput, MouseMoveOff
 
 	gosub, stuckKeyCheck
@@ -114,10 +121,20 @@ Return
 	SendRaw, %barcodeURLp1%
 	SendRaw, %extraClipboard%
 	SendRaw, %barcodeURLp2%
-	Send {Enter}
+	Send, {Enter}
 
 	gosub, stuckKeyCheck
 
+Return
+
+
+; FORMATS THE SKU IN A CIN7 BARCODE'S HTML TO BE BOLD AND CENTERED.
+^!f:: ; (Ctrl + Alt + f)
+	gosub, stuckKeyCheck
+	SendRaw, %prodLblFormatterFront%
+	SendRaw, %extraClipboard%
+	SendRaw, %prodLblFormatterBack%
+	gosub, stuckKeyCheck
 Return
 
 
